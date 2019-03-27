@@ -1,6 +1,7 @@
 #include <imgui\imgui.h>
 #include <imgui\imgui_impl_sdl_gl3.h>
 #include <glm\gtc\matrix_transform.hpp>
+#include "..\FiberStraw.h"
 
 namespace Box {
 	void drawCube();
@@ -45,8 +46,10 @@ bool renderSphere = false;
 bool renderCapsule = false;
 bool renderParticles = false;
 bool renderMesh = false;
-bool renderFiber = false;
+bool renderFiber = true;
 bool renderCube = false;
+
+FiberStraw fiberS;
 
 //You may have to change this code
 void renderPrims() {
@@ -68,7 +71,13 @@ void renderPrims() {
 	if (renderMesh)
 		Mesh::drawMesh();
 	if (renderFiber)
-		Fiber::drawFiber();
+	{
+		for (int i = 0; i < 100; i++)
+		{
+			Fiber::drawFiber();
+			Fiber::updateFiber(&fiberS.fibers[i].positions[0].x);
+		}
+	}
 
 	if (renderCube)
 		Cube::drawCube();
@@ -97,13 +106,17 @@ void GUI() {
 }
 
 void PhysicsInit() {
-	// Do your initialization code here...
-	// ...................................
+	
+
 }
 
 void PhysicsUpdate(float dt) {
-	// Do your update code here...
-	// ...........................
+	
+	for (int i = 0; i < 100; i++)
+	{
+		Fiber::updateFiber(&fiberS.fibers[i].positions[0].x);
+	}
+	
 }
 
 void PhysicsCleanup() {
