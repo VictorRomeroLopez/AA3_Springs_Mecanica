@@ -16,7 +16,6 @@ void setupCube();
 void cleanupCube();
 void drawCube();
 }
-
 namespace Axis {
 void setupAxis();
 void cleanupAxis();
@@ -118,7 +117,6 @@ void GLrender() {
 
 	ImGui::Render();
 }
-
 
 //////////////////////////////////////////////////
 GLuint compileShader(const char* shaderStr, GLenum shaderType, const char* name="") {

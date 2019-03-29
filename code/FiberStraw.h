@@ -127,7 +127,6 @@ struct PlaneCol : Collider {
 		getPlane(normal, d);
 		float value_prev_pos = normal.x * prev_pos.x + normal.y * prev_pos.y + normal.z * prev_pos.z + d;
 		float value_next_pos = normal.x * next_pos.x + normal.y * next_pos.y + normal.z * next_pos.z + d;
-
 		return(value_prev_pos <= 0 && value_next_pos > 0) || (value_prev_pos >= 0 && value_next_pos < 0);
 
 	}
@@ -145,7 +144,7 @@ struct SphereCol : Collider {
 	bool checkCollision(const glm::vec3& prev_pos, const glm::vec3& next_pos) {
 		old_pos = prev_pos;
 		new_pos = next_pos;
-		return getModule(next_pos - center) < radius && getModule(prev_pos - center) > radius;
+		return getModule(next_pos - center) < radius;
 	}
 
 	void getPlane(glm::vec3& normal, float& d) {

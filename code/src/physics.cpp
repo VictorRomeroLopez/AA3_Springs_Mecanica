@@ -11,7 +11,6 @@ namespace Box {
 namespace Axis {
 	void drawAxis();
 }
-
 namespace Sphere {
 	extern void updateSphere(glm::vec3 pos, float radius = 1.f);
 	extern void drawSphere();
@@ -40,8 +39,6 @@ namespace Cube {
 	extern void updateCube(const glm::mat4& transform);
 	extern void drawCube();
 }
-
-
 
 // Boolean variables allow to show/hide the primitives
 bool renderSphere = true;
@@ -95,7 +92,7 @@ bool playSimulation = false;
 bool useSphereCollider = false;
 float sphereY;
 float sphereTurnRadius = 4.f;
-float sphereTurnSpeed= 0.0f;
+float sphereTurnSpeed= 100.f;
 float sphereRadius;
 glm::vec2 k_Stretch;
 glm::vec2 k_Bend;
@@ -150,7 +147,7 @@ void GUI() {
 		{
 			ImGui::Checkbox("Use Sphere Collider", &useSphereCollider);
 			ImGui::DragFloat("Sphere Y", &SphereCenter.y, 0.1f);
-			ImGui::DragFloat("Sphere Turn Radius", &sphereTurnRadius, 0.1f);
+			ImGui::DragFloat("Sphere Turn Radius", &sphereTurnRadius, 0.1f, 0.1f, 10.f);
 			ImGui::DragFloat("Sphere Turn Speed", &sphereTurnSpeed, 0.1f);
 			ImGui::DragFloat("Sphere Radius", &CurrentSphereRadius, 0.1f, 0.5f, 5.f);
 			ImGui::TreePop();
@@ -183,12 +180,12 @@ void GUI() {
 	}
 }
 
-void rotateSphere(float dt)
-{
-	SphereCenter = (normalize(glm::vec3(SphereCenter.x, 0, SphereCenter.z)) * sphereTurnRadius) + glm::vec3(0.f, SphereCenter.y, 0.f);
-	glm::vec3 centerRadius = normalize(glm::vec3(SphereCenter.z, 0, -SphereCenter.x)) * sphereTurnSpeed * dt;
-	SphereCenter = (normalize(glm::vec3(sin(asin(getModule(centerRadius) / getModule(SphereCenter))), 0, cos(acos(getModule(centerRadius) / getModule(SphereCenter)))) * sphereTurnRadius) + glm::vec3(0.f, SphereCenter.y, 0.f));
-
+void rotateSphere(float dt) {
+	if (getModule(SphereCenter - glm::vec3(0, 0, 0)) > 0.1f) {
+		SphereCenter = (normalize(glm::vec3(SphereCenter.x, 0, SphereCenter.z)) * sphereTurnRadius) + glm::vec3(0.f, SphereCenter.y, 0.f);
+		glm::vec3 centerRadius = normalize(glm::vec3(SphereCenter.z, 0, -SphereCenter.x)) * sphereTurnSpeed * dt;
+		SphereCenter = normalize(glm::vec3(SphereCenter.x + centerRadius.x, 0, SphereCenter.z + centerRadius.z) - glm::vec3(0, 0, 0)) * sphereTurnRadius + glm::vec3(0.f, SphereCenter.y, 0.f);
+	}
 }
 
 void PhysicsInit() {
@@ -205,6 +202,9 @@ void PhysicsInit() {
 
 void PhysicsUpdate(float dt) {
 	
+	colliders.pop_back();
+	colliders.push_back(new SphereCol(SphereCenter, CurrentSphereRadius));
+
 	dt /= 10;
 	for (int i = 0; i < NUM_FIBRES; i++)
 	{
