@@ -23,9 +23,9 @@ glm::vec3 computeForces(FiberStraw & fiber, int idx, const std::vector<ForceActu
 	for (int i = 0; i < conn.size(); i++)
 	{
 		if (abs(idx - conn[i])!=1)
-			totalF += springforce(fiber.positions[idx], fiber.velocities[idx], fiber.positions[conn[i]], fiber.velocities[conn[i]], restLength * 2, ke/2.5f, kd);
+			totalF += springforce(fiber.positions[idx], fiber.velocities[idx], fiber.positions[conn[i]], fiber.velocities[conn[i]], restLength * 2, ke.x/2.5f, kd.x);
 		else
-			totalF += springforce(fiber.positions[idx], fiber.velocities[idx], fiber.positions[conn[i]], fiber.velocities[conn[i]], restLength, ke, kd);
+			totalF += springforce(fiber.positions[idx], fiber.velocities[idx], fiber.positions[conn[i]], fiber.velocities[conn[i]], restLength, ke.y, kd.y);
 	}
 
 	for (int i = 0; i < force_acts.size(); i++)
@@ -64,16 +64,20 @@ void verlet(float dt, FiberStraw & fiber, const std::vector<Collider*>& collider
 {
 	glm::vec3 aux;
 	glm::vec3 aux2;
-	for (int i = 1; i < NUM_PARTICLES; i++)
-	{
+	
+	if (playSimulation) {
+		for (int i = 1; i < NUM_PARTICLES; i++)
+		{
 			aux = fiber.positions[i];
 			fiber.positions[i] = fiber.positions[i] + (fiber.positions[i] - fiber.lastPositions[i]) + (computeForces(fiber, i, force_acts) / mass) * pow(dt, 2);
 			fiber.lastPositions[i] = aux;
 			for (int j = 0; j < colliders.size(); j++)
 				if (colliders[j]->checkCollision(fiber.lastPositions[i], fiber.positions[i]))
 					colliders[j]->computeCollision(fiber.lastPositions[i], fiber.positions[i]);
-		
+
 
 			fiber.velocities[i] = (fiber.positions[i] - fiber.lastPositions[i]) / dt;
+		}
 	}
+	
 }

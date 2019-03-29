@@ -12,10 +12,11 @@
 #include <iostream>
 
 #define NUM_PARTICLES 5
+extern bool playSimulation;
 extern float restLength;
 extern float mass;
-extern float ke;
-extern float kd;
+extern glm::vec2 ke;
+extern glm::vec2 kd;
 extern float bounceCoefficient;
 extern glm::vec3 gravity;
 extern glm::vec3 windForce;

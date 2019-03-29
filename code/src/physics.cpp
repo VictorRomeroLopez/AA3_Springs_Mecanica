@@ -89,30 +89,33 @@ void renderPrims() {
 
 //Variables de la interfaz de usuario
 bool playSimulation = false;
+bool reset = false;
+
+//Fribras
+float restLength = 1;
+float mass = 0.1f;
+glm::vec2 ke(30, 30);
+glm::vec2 kd(10.f, 10.f);
+
+//Friccion y Elasticidad
+float bounceCoefficient = 0.1f;
+float nu = 0.0f;
+
+//Esfera
 bool useSphereCollider = false;
 float sphereY;
 float sphereTurnRadius = 4.f;
 float sphereTurnSpeed= 100.f;
 float sphereRadius;
-glm::vec2 k_Stretch;
-glm::vec2 k_Bend;
-float nu = 0.0f;
+
+//Fuerzas
 bool use_Gravity = true;
 glm::vec3 gravity(0,-0.1f,0);
 bool use_Wind = false;
 glm::vec3 windForce(0.1,0,0);
-float restLength = 1;
-float mass = 0.1f;
-float ke = 30;
-float kd = 10.f;
-bool reset=false;
-float bounceCoefficient = 0.1f;
-float particleLinkDistance;
-
 
 std::vector<ForceActuator*> forces;
 std::vector<Collider*> colliders;
-
 
 void GUI() {
 	bool show = true;
@@ -129,9 +132,10 @@ void GUI() {
 
 		if (ImGui::TreeNode("Spring Parameters"))
 		{
-			ImGui::DragFloat2("K Stretch", &k_Stretch.x, 0.1f);
-			ImGui::DragFloat2("K Bend", &k_Bend.x, 0.1f);
-			ImGui::DragFloat("Particle Link Distance", &particleLinkDistance, 0.1f);
+			ImGui::DragFloat("Particle Mass", &mass, 0.01f, 0.1f, 10.f);
+			ImGui::DragFloat2("K Stretch", &ke.x, 0.1f);
+			ImGui::DragFloat2("K Bend", &kd.x, 0.1f);
+			ImGui::DragFloat("Particle Link Distance", &restLength, 0.01f, 0.0f, 3.f);
 			ImGui::TreePop();
 		}
 
@@ -145,7 +149,7 @@ void GUI() {
 
 		if(ImGui::TreeNode("Sphere Parameters"))
 		{
-			ImGui::Checkbox("Use Sphere Collider", &useSphereCollider);
+			ImGui::Checkbox("Use Sphere Collider", &renderSphere);
 			ImGui::DragFloat("Sphere Y", &SphereCenter.y, 0.1f);
 			ImGui::DragFloat("Sphere Turn Radius", &sphereTurnRadius, 0.1f, 0.1f, 10.f);
 			ImGui::DragFloat("Sphere Turn Speed", &sphereTurnSpeed, 0.1f);
@@ -154,7 +158,6 @@ void GUI() {
 
 		}
 		
-
 		if (ImGui::TreeNode("Forces"))
 		{
 			ImGui::Checkbox("Use Gravity", &use_Gravity);
@@ -163,10 +166,6 @@ void GUI() {
 			ImGui::DragFloat3("Wind Accel", &windForce.x, 0.1f);
 			ImGui::TreePop();
 		}
-		ImGui::DragFloat("Rest Length", &restLength, 0.01f, 0.0f, 3.f);
-		ImGui::DragFloat("Mass", &mass, 0.01f, 0.1f, 10.f);
-		ImGui::DragFloat("Ke", &ke, 0.01f, 0.1f, 100.f);
-		ImGui::DragFloat("Kd", &kd, 0.01f, 0.1f, 10.f);
 	}
 	// .........................
 	
